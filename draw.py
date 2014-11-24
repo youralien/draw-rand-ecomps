@@ -10,8 +10,10 @@ from random import randint
 from random import choice
 import math
 
+img_sandbox = 'img-sandbox/'
+
 class Component:
-    def __init__(self, size = 512, thickness = 5, error = 20, id = 0):
+    def __init__(self, size = 100, thickness = 1, error = 4, id = 0):
         self.img = np.ones((size,size,3), np.uint8) * 255 
         self.size = size
         self.thickness = thickness
@@ -61,17 +63,23 @@ class Capacitor(Component):
         end_4   = self.pt(self.size,    self.size/2)
         self.drawLine(start_4, end_4)
 
+    def save(self):
+        print self.img.shape
+        cv2.imwrite(img_sandbox + 'capacitor%d.jpg' % self.id, self.img)
+
 class Resistor(Component):
     """
 
     --/\/\/\---
 
     """
-    def __init__(self, length, theta, error = 20):
+    def __init__(self, length, theta, error = 20, id = 0):
         Component.__init__(self)
         self.length = length
         self.theta = theta
         self.error = error
+        self.id = id 
+
 
     def draw(self):
         half = self.size/2
@@ -110,22 +118,21 @@ class Resistor(Component):
         randTheta = randTheta/180.0  * math.pi
         dx = self.length * math.sin(randTheta/2)
         dy = self.length * math.cos(randTheta/2)
-        return (start[0] + abs(X) * dx, start[1] + Y * dy) 
+        return (start[0] + abs(X) * dx, start[1] + Y * dy)
 
-
-
-
-
-
-
+    def save(self):
+        print self.img.shape
+        cv2.imwrite(img_sandbox + 'resistor%d.jpg' % self.id, self.img)
 
 if __name__ == "__main__":
     # Error is the error for where the points deviate from calculated
-    cap = Capacitor(error = 20)
+    cap = Capacitor(error = 4, id=0)
     cap.draw()
     cap.show()
+    cap.save()
     
     #Theta math.pi/5 is the angle on the resistors
-    res = Resistor(100, math.pi/5, error = 30)
+    res = Resistor(25, math.pi/5, error = 5, id=0)
     res.draw()
     res.show()
+    res.save()
